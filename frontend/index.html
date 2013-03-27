@@ -1,0 +1,47 @@
+<html>
+<head>
+	<title>Test</title>
+	<link rel="stylesheet" href="/css/style.css" />
+	<script type="text/javascript">
+		var require = {
+			baseUrl: '/js',
+			paths: {
+				underscore: 'vendor/underscore',
+				dom: 'vendor/jquery',
+				async: 'vendor/async'
+			},
+			shim: {
+				async: {
+					exports: 'async'
+				},
+				underscore: {
+					exports: '_'
+				},
+				dom: {
+					exports: 'jQuery'
+				}
+			},
+			deps: [
+				'messenger',
+				'app'
+			]
+		};
+	</script>
+	<script type="text/javascript" src="/js/vendor/require.js"></script>
+</head>
+<body>
+
+
+
+<div data-component="ad">
+	<input data-component="ad-run" type="button" value="Get Data!"/>
+	<input data-component="ad-run-message" type="button" value="Get Message"/>
+	<input data-component="ad-run-fail" type="button" value="Get Data! (fail)"/>
+	<input data-component="ad-run-404" type="button" value="Get Data! (404)"/>
+	<div data-component="ad-table-container"></div>
+</div>
+
+
+
+</body>
+</html>

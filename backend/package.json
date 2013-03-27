@@ -1,0 +1,33 @@
+{
+	"name": "Velo",
+	"description": "Road hazards reporting tool",
+	"version": "0.0.1",
+	"private": true,
+	"author": {
+		"name": "Nik Butenko",
+		"email": "nikita.butenko@gmail.com"
+	},
+	"contributors": [
+        {
+            "name": "Nik Butenko",
+            "email": "nikita.butenko@gmail.com"
+        },
+		{
+			"name": "Vasyl Boroviak",
+			"email": "kore.sar@gmail.com"
+		}
+	],
+	"scripts": {
+		"start": "supervisor -e \"node|js|html|json\" app.js"
+	},
+	"dependencies": {
+		"gleam": "git://github.com/nkbt/gleam.git#master",
+        "puma": "git://github.com/nkbt/puma.git#master",
+		"lib": "git://github.com/nkbt/lib.git#master",
+
+		"express": "*",
+		"async": "*",
+		"underscore": "*",
+		"underscore.string": "*"
+	}
+}
