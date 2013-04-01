@@ -16,6 +16,7 @@ var tableRow = '<tr>'
 
 define(['dom', 'underscore', 'request'], function ($, _, request) {
 
+
 	var $body = $(document.body),
 		runClickHandler,
 		runFailClickHandler,

@@ -8,21 +8,22 @@
 		"email": "nikita.butenko@gmail.com"
 	},
 	"contributors": [
-        {
-            "name": "Nik Butenko",
-            "email": "nikita.butenko@gmail.com"
-        },
+		{
+			"name": "Nik Butenko",
+			"email": "nikita.butenko@gmail.com"
+		},
 		{
 			"name": "Vasyl Boroviak",
 			"email": "kore.sar@gmail.com"
 		}
 	],
 	"scripts": {
-		"start": "supervisor -e \"node|js|html|json\" app.js"
+		"start-supervisor": "supervisor -e \"node|js|html|json\" app.js",
+		"start": "forever --debug --verbose --watch backend/app.js"
 	},
 	"dependencies": {
 		"gleam": "git://github.com/nkbt/gleam.git#master",
-        "puma": "git://github.com/nkbt/puma.git#master",
+		"puma": "git://github.com/nkbt/puma.git#master",
 		"lib": "git://github.com/nkbt/lib.git#master",
 
 		"express": "*",

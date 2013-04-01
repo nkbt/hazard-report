@@ -1,30 +1,114 @@
 "use strict";
-/*global Zepto:false, $:false, define: false, require: false, requirejs: false, async: false, CryptoJS: false, google: false */
 /*jshint browser:true */
 /*jslint browser:true */
 
 
-define(['../map'], function () {
+define(['dom', 'underscore', 'request', 'core'], function ($, _, request, core) {
 
-	var idUser = $('[name="idUser"]').val();
-	$(document.body)
-		.on('blur', '[name="idUser"]:valid', function () {
-			var newIdUser = $('[name="idUser"]').val();
-			if (idUser !== newIdUser) {
-				idUser = newIdUser;
-				$('[name="id"]').val(CryptoJS.MD5(newIdUser + (new Date()).toJSON()).toString());
+
+		/**
+		 * @constructor
+		 * @class
+		 * @extends Component
+		 * @this TestComponent
+		 */
+	var TestComponent = function TestComponent() {
+		console.log(this.namespace);
+
+		this.on('click', '[data-component="ad-run"]', this.onClickRun);
+
+		//			$body.on('click', '[data-component="ad-run"]', runClickHandler);
+
+
+	};
+
+	return core.createComponent(TestComponent,
+		/**
+		 * @lends TestComponent.prortotype
+		 */
+		{
+			namespace: 'ad',
+
+			/**
+			 * @param {Event} event
+			 * @param {Array} $element
+			 * @param {Array} $target
+			 * @this TestComponent
+			 */
+			onClickRun: function (event, $element, $target) {
+				console.log("event", event);
+				console.log("$element", $element);
+				console.log("$target", $target);
+				return;
+				request.get('/ad', {}, function (payloadEntity) {
+					if (_.isUndefined(payloadEntity)) {
+						return;
+					}
+					var $table = $(table).clone(),
+						$tbody = $table.find('tbody');
+					_(payloadEntity.get('data')).each(function (adEntity) {
+						var $tableRow = $(tableRow).clone();
+						_(adEntity.get()).each(function (value, property) {
+							$tableRow.find('[data-bind="' + property + '"]').html(value);
+						});
+						$tableRow.appendTo($tbody); //.attr('data-bind', "Ad:" + adEntity.get('id'));
+					});
+
+					$element.find('[data-component="ad-table-container"]').html($table);
+
+				});
+
 			}
-			$('[name="file"]').prop('disabled', false);
-		})
-		.on('change', '[name="idUser"]:invalid', function () {
-			$('[name="file"]').prop('disabled', true);
-		})
-		.on('change blur', function () {
-			$('[type="submit"], [name="file"]').prop('disabled', ($(':invalid').length > 0));
-		})
-		.on('googleMap:markerMoved', function (event, lat, lng) {
-			$('[name="lat"]').val(lat);
-			$('[name="lng"]').val(lng);
 		});
 
+	return;
+	var $body = $(document.body),
+		runClickHandler,
+		runFailClickHandler,
+		runMessageClickHandler,
+		run404ClickHandler;
+
+	runClickHandler = function (event) {
+		var $element = $(event.target).closest('[data-component="ad"]');
+
+		request.get('/ad', {}, function (payloadEntity) {
+			if (_.isUndefined(payloadEntity)) {
+				return;
+			}
+			var $table = $(table).clone(),
+				$tbody = $table.find('tbody');
+			_(payloadEntity.get('data')).each(function (adEntity) {
+				var $tableRow = $(tableRow).clone();
+				_(adEntity.get()).each(function (value, property) {
+					$tableRow.find('[data-bind="' + property + '"]').html(value);
+				});
+				$tableRow.appendTo($tbody); //.attr('data-bind', "Ad:" + adEntity.get('id'));
+			});
+
+			$element.find('[data-component="ad-table-container"]').html($table);
+
+		});
+	};
+
+	runFailClickHandler = function () {
+		request.get('/ad/fail', {}, function () {
+		});
+	};
+
+	run404ClickHandler = function () {
+		request.get('/ad/404', {}, function () {
+		});
+	};
+
+	runMessageClickHandler = function () {
+		request.get('/ad/message', {}, function () {
+		});
+	};
+
+	$body.on('click', '[data-component="ad-run"]', runClickHandler);
+	$body.on('click', '[data-component="ad-run-fail"]', runFailClickHandler);
+	$body.on('click', '[data-component="ad-run-404"]', run404ClickHandler);
+	$body.on('click', '[data-component="ad-run-message"]', runMessageClickHandler);
 });
+
+// http://localhost:3000/js/entity/ad.js

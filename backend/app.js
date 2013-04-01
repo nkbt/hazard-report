@@ -3,6 +3,7 @@
 var express = require('express');
 var http = require('http');
 var app = express();
+var path = require('path');
 
 var puma = require('puma');
 puma.setModuleRoot(__dirname + '/modules');
@@ -10,6 +11,7 @@ puma.setModuleRoot(__dirname + '/modules');
 var gleam = require('gleam');
 gleam.setModelRoot(__dirname + '/models');
 
+app.set('uploadRoot', path.normalize(__dirname + '/../frontend/files'));
 app.set('port', process.env.PORT || 3000);
 app.set('case sensitive routing', true);
 app.use(express.logger('dev'));

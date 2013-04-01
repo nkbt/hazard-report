@@ -1,0 +1,12 @@
+{
+	"name": "hazard-report-runner",
+	"version": "0.0.1",
+	"private": true,
+	"author": {
+		"name": "Nik Butenko",
+		"email": "nikita.butenko@gmail.com"
+	},
+	"scripts": {
+		"start": "supervisor -e \"node|js|html|json\" backend/app.js"
+	}
+}

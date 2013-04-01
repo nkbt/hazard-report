@@ -1,14 +1,17 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title>Test</title>
-	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="/css/style.css"/>
 	<script type="text/javascript">
 		var require = {
 			baseUrl: '/js',
 			paths: {
 				underscore: 'vendor/underscore',
-				dom: 'vendor/jquery',
-				async: 'vendor/async'
+//				dom: 'vendor/jquery',
+				dom: 'vendor/zepto',
+				async: 'vendor/async',
+				md5: 'vendor/md5'
 			},
 			shim: {
 				async: {
@@ -17,12 +20,18 @@
 				underscore: {
 					exports: '_'
 				},
+				md5: {
+					exports: 'CryptoJS.MD5'
+				},
 				dom: {
-					exports: 'jQuery'
+//					exports: 'jQuery'
+					exports: 'Zepto'
 				}
 			},
 			deps: [
+				'dom',
 				'messenger',
+				'map',
 				'app'
 			]
 		};
@@ -32,15 +41,23 @@
 <body>
 
 
+<div data-component="upload">
 
-<div data-component="ad">
-	<input data-component="ad-run" type="button" value="Get Data!"/>
-	<input data-component="ad-run-message" type="button" value="Get Message"/>
-	<input data-component="ad-run-fail" type="button" value="Get Data! (fail)"/>
-	<input data-component="ad-run-404" type="button" value="Get Data! (404)"/>
-	<div data-component="ad-table-container"></div>
+	<form id="mainForm" action="/upload?ajax=1" enctype="multipart/form-data" method="POST">
+		<label>E-mail: <input type="email" name="email" placeholder="E-mail" required/></label>
+
+		<label>ID: <input type="text" name="id" required pattern="[0-9a-f]{32}"/></label>
+		<label>Latitude: <input type="text" name="lat" required pattern="-?\d{1,3}\.\d+"/></label>
+		<label>Longitude: <input type="text" name="lng" required pattern="-?\d{1,3}\.\d+"/></label>
+
+		<label>Images: <input type="file" name="file" multiple disabled required/></label>
+
+		<input type="submit" value="Submit" disabled/>
+	</form>
+
+	<div id="googleMap" style="display:none; width: 100%; height: 400px; background: #ccc;"></div>
+	<div id="imageList"></div>
 </div>
-
 
 
 </body>

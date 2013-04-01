@@ -1,114 +1,61 @@
 "use strict";
+/*global Zepto:false, $:false, define: false, require: false, requirejs: false, async: false, CryptoJS: false, google: false */
 /*jshint browser:true */
 /*jslint browser:true */
 
 
-define(['dom', 'underscore', 'request', 'core'], function ($, _, request, core) {
+define(['dom', 'underscore', 'md5', 'request'], function ($, _, md5, request) {
 
+	var email = $('[name="email"]').val(),
+		formData = localStorage.getItem('form');
 
-		/**
-		 * @constructor
-		 * @class
-		 * @extends Component
-		 * @this TestComponent
-		 */
-	var TestComponent = function TestComponent() {
-		console.log(this.namespace);
+	if (!_.isNull(formData)) {
+		_.forEach(JSON.parse(formData), function (field) {
+			$('[name=' + field.name + ']:not([type=file])').val(field.value);
+		});
+	}
+	if ($("[name=email]:valid").length) {
+		$('[name="file"]').prop('disabled', false);
+	}
 
-		this.on('click', '[data-component="ad-run"]', this.onClickRun);
-
-		//			$body.on('click', '[data-component="ad-run"]', runClickHandler);
-
-
-	};
-
-	return core.createComponent(TestComponent,
-		/**
-		 * @lends TestComponent.prortotype
-		 */
-		{
-			namespace: 'ad',
-
-			/**
-			 * @param {Event} event
-			 * @param {Array} $element
-			 * @param {Array} $target
-			 * @this TestComponent
-			 */
-			onClickRun: function (event, $element, $target) {
-				console.log("event", event);
-				console.log("$element", $element);
-				console.log("$target", $target);
-				return;
-				request.get('/ad', {}, function (payloadEntity) {
-					if (_.isUndefined(payloadEntity)) {
-						return;
-					}
-					var $table = $(table).clone(),
-						$tbody = $table.find('tbody');
-					_(payloadEntity.get('data')).each(function (adEntity) {
-						var $tableRow = $(tableRow).clone();
-						_(adEntity.get()).each(function (value, property) {
-							$tableRow.find('[data-bind="' + property + '"]').html(value);
-						});
-						$tableRow.appendTo($tbody); //.attr('data-bind', "Ad:" + adEntity.get('id'));
-					});
-
-					$element.find('[data-component="ad-table-container"]').html($table);
-
-				});
-
+	$(document.body)
+		.on('blur', '[name=email]:valid', function () {
+			var newEmail = $('[name="email"]').val();
+			if (email !== newEmail) {
+				email = newEmail;
+				$('[name="id"]').val(md5(newEmail).toString());
 			}
+			$('[name="file"]').prop('disabled', false);
+		})
+		.on('change', '[name=email]:invalid', function () {
+			$('[name="file"]').prop('disabled', true);
+		})
+		.on('change blur', function () {
+			$('[type="submit"], [name="file"]').prop('disabled', ($(':invalid').length > 0));
+		})
+		.on('googleMap:markerMoved', function (event, lat, lng) {
+			$('[name="lat"]').val(lat);
+			$('[name="lng"]').val(lng);
+		})
+		.on('submit', 'form', function (event) {
+			localStorage.setItem('form', JSON.stringify($(this).serializeArray()));
 		});
 
-	return;
-	var $body = $(document.body),
-		runClickHandler,
-		runFailClickHandler,
-		runMessageClickHandler,
-		run404ClickHandler;
 
-	runClickHandler = function (event) {
-		var $element = $(event.target).closest('[data-component="ad"]');
-
-		request.get('/ad', {}, function (payloadEntity) {
+	request.get(
+		'/index',
+		{'id': $('[name="id"]').val()},
+		function (payloadEntity) {
 			if (_.isUndefined(payloadEntity)) {
 				return;
 			}
-			var $table = $(table).clone(),
-				$tbody = $table.find('tbody');
-			_(payloadEntity.get('data')).each(function (adEntity) {
-				var $tableRow = $(tableRow).clone();
-				_(adEntity.get()).each(function (value, property) {
-					$tableRow.find('[data-bind="' + property + '"]').html(value);
-				});
-				$tableRow.appendTo($tbody); //.attr('data-bind', "Ad:" + adEntity.get('id'));
+			var $element = $('#imageList');
+			var reportEntity = payloadEntity.get('data');
+			_(reportEntity.get('files')).each(function (file) {
+				$('<img style="height: 100px; border: 1px solid #888;" alt="" />')
+					.attr('src', "/files" + file)
+					.appendTo($element);
 			});
-
-			$element.find('[data-component="ad-table-container"]').html($table);
-
-		});
-	};
-
-	runFailClickHandler = function () {
-		request.get('/ad/fail', {}, function () {
-		});
-	};
-
-	run404ClickHandler = function () {
-		request.get('/ad/404', {}, function () {
-		});
-	};
-
-	runMessageClickHandler = function () {
-		request.get('/ad/message', {}, function () {
-		});
-	};
-
-	$body.on('click', '[data-component="ad-run"]', runClickHandler);
-	$body.on('click', '[data-component="ad-run-fail"]', runFailClickHandler);
-	$body.on('click', '[data-component="ad-run-404"]', run404ClickHandler);
-	$body.on('click', '[data-component="ad-run-message"]', runMessageClickHandler);
+		}
+	);
 });
-
-// http://localhost:3000/js/entity/ad.js

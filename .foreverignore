@@ -1,0 +1,9 @@
+.git
+.git/*
+.idea/*
+
+# unnecessary, but retained as references for next time I need to change something
+*.css
+*.png
+*.jpeg
+*.xml
